@@ -18,15 +18,7 @@
 	smudge = git-lfs smudge -- %f
 	process = git-lfs filter-process
 	required = true
-[gpg]
-	format = ssh
-
-[commit]
-	gpgsign = true
-
-# Machine-specific paths (signingkey, allowedSignersFile, gpg.ssh.program)
-# belong in ~/.gitconfig.local, NOT here. If signing breaks on a new
-# machine, create .gitconfig.local with the local paths — do NOT add
-# absolute paths back into this tracked file. See commit e47f06c.
+# Machine-specific settings belong in ~/.gitconfig.local (untracked),
+# NOT here. Do NOT add absolute/machine paths back into this tracked file.
 [include]
 	path = .gitconfig.local
