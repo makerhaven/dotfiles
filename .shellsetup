@@ -44,6 +44,33 @@ esac
 # Source .env if it exists in our dotfiles
 [ -f "$HOME/dotfiles/.env" ] && . "$HOME/dotfiles/.env"
 
+# --- per-machine commit signing (opt-in, self-healing) ---
+# Enable SSH commit signing ONLY where it actually works, and only in the
+# untracked ~/.gitconfig.local overlay. The tracked .gitconfig stays
+# signing-free so machines without a usable key/binary never have their
+# pulls/rebases/merges broken by a failed sign. Capable machines sign and
+# show "Verified"; others quietly skip.
+git_cfg_local() { git config --file "$HOME/.gitconfig.local" "$@"; }
+
+signing_key=""
+for k in "$HOME/.ssh/id_ed25519" "$HOME/.ssh/id_rsa"; do
+  [ -f "$k" ] && signing_key="$k" && break
+done
+
+# Test-sign non-interactively (no passphrase prompt can hang shell startup).
+if [ -n "$signing_key" ] && command -v ssh-keygen >/dev/null 2>&1 &&
+   SSH_ASKPASS=/usr/bin/false SSH_ASKPASS_REQUIRE=force \
+   printf 'test' | ssh-keygen -Y sign -n git -f "$signing_key" >/dev/null 2>&1; then
+  git_cfg_local commit.gpgsign true
+  git_cfg_local gpg.format ssh
+  git_cfg_local user.signingkey "$signing_key"
+else
+  # Don't let a stale overlay keep forcing signs on a now-incapable machine.
+  git_cfg_local --unset commit.gpgsign 2>/dev/null || true
+fi
+unset signing_key k
+# --- end signing ---
+
 # Language-specific paths, require language-specific setups
 export PATH="$GOPATH/bin:$PATH"                         # add go binaries
 
