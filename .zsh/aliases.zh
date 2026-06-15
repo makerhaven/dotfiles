@@ -1,8 +1,8 @@
 lsd_or_ls () {
     if command -v lsd >/dev/null 2>&1; then
-        lsd $1
+        lsd "$@"
     else
-        ls $1
+        ls "$@"
     fi
 }
 
