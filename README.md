@@ -1,34 +1,52 @@
 # Dotfiles
 
-A personal set of shell, editor, terminal, and macOS configuration files for a fast and consistent local development environment.
+This repository contains my personal macOS and shell configuration, organized as a reusable dotfiles setup for a clean, predictable development environment. It centralizes my preferred shell preferences, terminal tools, editor configuration, Git settings, and app-level customizations in one place so they can be installed consistently across machines.
 
-This repository is designed to live at `$HOME/dotfiles` and uses `linker.sh` to create symlinks into the standard config locations on your machine.
+The repo is designed to live at `$HOME/dotfiles` and uses `linker.sh` to create symbolic links from this checkout into the standard configuration paths used by the system and applications.
 
-## Included configuration
+## What is included
 
-- Shell setup: `.bashrc`, `.bash_profile`, `.profile`, `.aliases`, `.inputrc`, `.shellsetup`
-- Zsh setup: `.zshrc`, `.zsh/`
-- Git: `.gitconfig`, `.gitignore`, `.config/git/allowed_signers`
-- Terminal and editor config: `.tmux.conf`, `.vimrc`, `.config/nvim`, `.config/lsd`, `.config/ghostty`, `.config/ccstatusline`
-- macOS and app config: `.hammerspoon/`, `iterm2profile/`, `macossetup/`
-- Utilities: `scripts/`, `linker.sh`, `git-ssh-signer`
+This setup is meant to cover the day-to-day developer workflow, including:
 
-## How it works
+- Shell configuration for Bash and Zsh
+- Git configuration and SSH signing support
+- Terminal tooling and prompt setup
+- Editor setup for Neovim and Vim
+- macOS utility configuration, including Hammerspoon and iTerm2 profiles
+- App-specific config for Ghostty, `lsd`, and related tools
+- Small helper scripts and machine-local overrides
 
-The repo assumes the checkout lives at:
+### Key files and directories
+
+- `.bashrc`, `.bash_profile`, `.profile`, `.aliases`, `.inputrc`, `.shellsetup`
+- `.zshrc`, `.zsh/`
+- `.gitconfig`, `.gitignore`, `.config/git/allowed_signers`
+- `.tmux.conf`, `.vimrc`, `.config/nvim`
+- `.config/ghostty`, `.config/lsd`, `.config/ccstatusline`
+- `.hammerspoon/`, `iterm2profile/`, `macossetup/`
+- `scripts/`, `linker.sh`, `git-ssh-signer`
+
+## How the setup works
+
+The repository assumes a checkout in your home directory:
 
 ```bash
 $HOME/dotfiles
 ```
 
-`linker.sh` handles the setup by:
+`linker.sh` is the core installer script. It performs several tasks automatically:
 
-- installing/updating `antidote` for zsh plugins
-- creating symlinks from the repo into your home directory
-- linking app configs such as Ghostty, nvim, and Hammerspoon
-- setting Git SSH signer configuration when available
+- clones or updates `antidote` for zsh plugin management
+- creates symlinks from the repo into `$HOME`
+- links editor and terminal config directories into their expected locations
+- configures Git SSH signer support if the relevant files are present
+- safely handles re-runs without clobbering user-created files
 
-## Install
+This makes the setup idempotent and easy to reapply after reinstalling the system or moving to a new machine.
+
+## Installation
+
+Clone the repository and run the linker:
 
 ```bash
 git clone https://github.com/makerhaven/dotfiles.git "$HOME/dotfiles"
@@ -36,33 +54,41 @@ cd "$HOME/dotfiles"
 ./linker.sh
 ```
 
-Then open a new shell or reload your config:
+After installation, reload your shell:
 
 ```bash
 source ~/.zshrc
 ```
 
-If you use Bash instead of Zsh, you can also source the relevant files manually:
+If you prefer Bash, source the Bash profile instead:
 
 ```bash
 source ~/.bash_profile
 ```
 
-## Local overrides
+## Local machine overrides
 
-A per-machine overlay is supported through:
+The repo supports a machine-specific override file:
 
 ```bash
 ~/.zshrc.local
 ```
 
-This allows machine-specific aliases, exports, or shell customizations without polluting the shared repo config.
+This is useful for environment-specific values such as:
+
+- custom PATH entries
+- host-specific aliases
+- developer credentials or local tool configuration
+- temporary debug settings
+
+These customizations stay out of the shared repository, while the base config remains portable.
 
 ## Notes
 
-- The repo is intended for personal use and machine-specific customization.
-- Some configuration is tuned for macOS workflows.
-- The loader script is intentionally idempotent and safe to re-run.
+- This repository is intended for personal, developer-focused use.
+- Some configuration is tailored to a macOS workflow.
+- The linking script is designed to be safe to re-run and resilient to existing user files.
+- Anything that is intentionally machine-specific should live in local override files or be kept outside the tracked repository configuration.
 
 ## License
 
